@@ -25,13 +25,13 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "ext-sodium": "*",
         "ext-json": "*",
         "nexus-lab/cpanel-installer": "^1.0"
     },
     "suggest": {
-        "ext-pdo_mysql": "Required to connect to cPanel MySQL and MariaDB databases",
+        "ext-sodium": "Recommended for native Libsodium cryptographic operations (XChaCha20-Poly1305)",
         "ext-openssl": "Fallback cryptographic engine when native sodium is restricted",
+        "ext-pdo_mysql": "Required to connect to cPanel MySQL and MariaDB databases",
         "ext-mbstring": "Recommended for full Unicode and multibyte input sanitization",
         "ext-fileinfo": "Required for upload MIME inspection",
         "ext-gd": "Required for image sanitization and EXIF execution stripping"

@@ -167,8 +167,8 @@ php nexus serve</code></pre>
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "ext-sodium": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "nexus-lab/nexus": "^1.0 || ^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -201,7 +201,6 @@ git push origin v1.0.0</code></pre>
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "ext-sodium": "*",
         "ext-json": "*",
         "nexus-lab/cpanel-installer": "^1.0"
     },
