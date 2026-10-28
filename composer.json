@@ -1,5 +1,5 @@
 {
-    "name": "nexus-lab/shield-boilerplate",
+    "name": "nexus-lab/nexus",
     "description": "Nexus Shield v2 - Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework boilerplate designed for cPanel shared hosting.",
     "type": "project",
     "license": "MIT",
