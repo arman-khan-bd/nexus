@@ -167,8 +167,7 @@ php nexus serve</code></pre>
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "ext-json": "*",
-        "nexus-lab/nexus": "^1.0 || ^2.0"
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {
