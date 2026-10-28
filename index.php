@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Nexus / NextPHP Shield v2 - Front Controller
+ * Nexus Shield v2 - Front Controller
  *
  * Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework.
  * Architected specifically for cPanel shared hosting (public_html root compatible, zero Node.js).
  */
 
-// 0. PHP Built-in CLI Server Static Asset Handler (php nextphp serve)
+// 0. PHP Built-in CLI Server Static Asset Handler (php nexus serve)
 if (php_sapi_name() === 'cli-server') {
     $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     if ($uriPath !== null && $uriPath !== '/') {
@@ -37,6 +37,7 @@ if (file_exists($baseDir . '/vendor/autoload.php')) {
             'Core\\'               => $baseDir . '/core/',
             'App\\'                => $baseDir . '/app/',
             'Components\\'         => $baseDir . '/components/',
+            'Nexus\\Installer\\'   => $baseDir . '/packages/cpanel-installer/src/',
             'NextPHP\\Installer\\' => $baseDir . '/packages/cpanel-installer/src/',
         ];
 

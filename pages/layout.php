@@ -11,7 +11,7 @@ declare(strict_types=1);
  * - Dynamic CSP Nonce generation and header/meta injection
  * - Alpine.js + Alpine Morph plugin
  * - Lucide SVG Icons
- * - Zero-AJAX pushState SPA Engine (nextphp-spa.js)
+ * - Zero-AJAX pushState SPA Engine (nexus-spa.js)
  */
 
 $cspNonce = base64_encode(random_bytes(16));
@@ -188,8 +188,8 @@ if (!headers_sent()) {
     <!-- Lucide SVG Icons -->
     <script nonce="<?= $cspNonce ?>" src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- NextPHP SPA Client Engine (pushState + Alpine Morph + Server Actions + Toasts) -->
-    <script nonce="<?= $cspNonce ?>" defer src="/assets/js/nextphp-spa.js"></script>
+    <!-- Nexus SPA Client Engine (pushState + Alpine Morph + Server Actions + Toasts) -->
+    <script nonce="<?= $cspNonce ?>" defer src="/assets/js/nexus-spa.js"></script>
 </head>
 <body x-data="{ darkMode: true }" class="bg-background text-foreground min-h-screen antialiased flex flex-col selection:bg-primary selection:text-primary-foreground transition-colors duration-200">
 

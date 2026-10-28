@@ -18,7 +18,7 @@ use Core\Compiler\JsxCompiler;
  * Key Capabilities:
  * - Dynamic route parameters: /dashboard/[id]/page.php, /docs/[...slug]/page.php
  * - Automatic hierarchical nested layouts (root to leaf layout.php discovery)
- * - Zero-AJAX pushState SPA morphing via Alpine Morph (X-NextPHP-SPA: true)
+ * - Zero-AJAX pushState SPA morphing via Alpine Morph (X-Nexus-SPA: true)
  * - Unified Server Action execution pipeline
  * - Graceful 404 fallback with custom pages/404.php support
  */
@@ -227,9 +227,11 @@ class AppRouter
 
         return new Response($output, 200, [
             'Content-Type'     => 'text/html; charset=UTF-8',
+            'X-Nexus-SPA'      => 'true',
             'X-NextPHP-SPA'    => 'true',
-            'X-NextPHP-Morph'  => 'true',
             'X-Nexus-Morph'    => 'true',
+            'X-NextPHP-Morph'  => 'true',
+            'X-Nexus-Title'    => $title,
             'X-NextPHP-Title'  => $title,
             'X-CSRF-TOKEN'     => Csrf::token(),
         ]);

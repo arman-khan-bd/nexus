@@ -16,9 +16,11 @@ if (file_exists($baseDir . '/vendor/autoload.php')) {
 } else {
     spl_autoload_register(function (string $class) use ($baseDir) {
         $prefixMap = [
-            'Core\\'       => $baseDir . '/core/',
-            'App\\'        => $baseDir . '/app/',
-            'Components\\' => $baseDir . '/components/',
+            'Core\\'               => $baseDir . '/core/',
+            'App\\'                => $baseDir . '/app/',
+            'Components\\'         => $baseDir . '/components/',
+            'Nexus\\Installer\\'   => $baseDir . '/packages/cpanel-installer/src/',
+            'NextPHP\\Installer\\' => $baseDir . '/packages/cpanel-installer/src/',
         ];
         foreach ($prefixMap as $prefix => $base) {
             $len = strlen($prefix);

@@ -63,7 +63,7 @@ declare(strict_types=1);
                     <a href="#server-actions" class="block px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">5. Server Actions &amp; SPA</a>
                     <a href="#security-perimeter" class="block px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">6. 5-Layer Security Fortress</a>
                     <a href="#database-orm" class="block px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">7. Database &amp; AEAD Models</a>
-                    <a href="#cli-toolchain" class="block px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">8. NextPHP CLI Toolchain</a>
+                    <a href="#cli-toolchain" class="block px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">8. Nexus CLI Toolchain</a>
                     <a href="#ai-agent-guide" class="block px-3 py-1.5 rounded-lg text-primary font-semibold hover:bg-primary/10 transition-colors">9. AI Agent Context Protocol</a>
                 </nav>
             </div>
@@ -101,9 +101,9 @@ declare(strict_types=1);
                     <h3 class="text-base font-bold text-foreground">Option A: Single-Command Composer Installation</h3>
                     <p class="text-xs text-muted-foreground">Run this in your terminal to bootstrap a fresh project with isolated 0700 storage permissions, a secure 256-bit APP_KEY, and precompiled JSX caches:</p>
                     <div class="relative group">
-                        <pre class="p-4 rounded-xl border border-border bg-muted/40 font-mono text-xs sm:text-sm text-foreground overflow-x-auto"><code>composer create-project nexus/shield-boilerplate my-app
+                        <pre class="p-4 rounded-xl border border-border bg-muted/40 font-mono text-xs sm:text-sm text-foreground overflow-x-auto"><code>composer create-project nexus-lab/shield-boilerplate my-app
 cd my-app
-php nextphp serve</code></pre>
+php nexus serve</code></pre>
                     </div>
                 </div>
 
@@ -114,7 +114,7 @@ php nextphp serve</code></pre>
                     <div class="p-4 rounded-xl border border-border bg-card space-y-3 text-xs sm:text-sm text-muted-foreground">
                         <div class="flex items-start gap-3">
                             <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-xs">1</span>
-                            <div>Download the release archive from GitHub or generate a production package via <code class="text-primary font-mono bg-muted px-1 py-0.5 rounded">php nextphp build:cpanel</code>.</div>
+                            <div>Download the release archive from GitHub or generate a production package via <code class="text-primary font-mono bg-muted px-1 py-0.5 rounded">php nexus build:cpanel</code>.</div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-xs">2</span>
@@ -147,11 +147,11 @@ php nextphp serve</code></pre>
                 </p>
 
                 <!-- Part 1: Publishing the cPanel Installer Library -->
-                <Card title="Part 1: Publish nextphp/cpanel-installer Separately" icon="layers" description="Standalone library required by both boilerplate and custom projects">
+                <Card title="Part 1: Publish nexus-lab/cpanel-installer Separately" icon="layers" description="Standalone library required by both boilerplate and custom projects">
                     <div class="space-y-4 text-xs sm:text-sm text-muted-foreground">
-                        <p>1. <strong>Create GitHub Repository</strong>: Create a public repository named <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nextphp/cpanel-installer</code> containing:</p>
+                        <p>1. <strong>Create GitHub Repository</strong>: Create a public repository named <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nexus-lab/cpanel-installer</code> containing:</p>
                         <ul class="list-disc list-inside space-y-1 font-mono text-xs">
-                            <li>composer.json (package name: nextphp/cpanel-installer, type: library)</li>
+                            <li>composer.json (package name: nexus-lab/cpanel-installer, type: library)</li>
                             <li>src/Installer.php (Pre-req checks, installation engine)</li>
                             <li>src/DatabaseMigrator.php (Transactional SQL migration engine)</li>
                             <li>src/AdminProvisioner.php (Password hashing, APP_KEY generation)</li>
@@ -160,8 +160,8 @@ php nextphp serve</code></pre>
 
                         <p>2. <strong>composer.json manifest for the Installer Library</strong>:</p>
                         <pre class="p-3 rounded-lg border border-border bg-muted/40 font-mono text-xs overflow-x-auto text-foreground"><code>{
-    "name": "nextphp/cpanel-installer",
-    "description": "Zero-SSH cPanel Installation Wizard & Automated Migration Engine",
+    "name": "nexus-lab/cpanel-installer",
+    "description": "Zero-SSH graphical web installer for Nexus applications on cPanel shared hosting.",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -172,6 +172,7 @@ php nextphp serve</code></pre>
     },
     "autoload": {
         "psr-4": {
+            "Nexus\\Installer\\": "src/",
             "NextPHP\\Installer\\": "src/"
         }
     }
@@ -181,18 +182,19 @@ php nextphp serve</code></pre>
                         <pre class="p-3 rounded-lg border border-border bg-muted/40 font-mono text-xs overflow-x-auto text-foreground"><code>git tag -a v1.0.0 -m "Release v1.0.0: Stable cPanel Installer"
 git push origin v1.0.0</code></pre>
 
-                        <p>4. <strong>Submit to Packagist</strong>: Log in to <a href="https://packagist.org" target="_blank" class="text-primary underline">packagist.org</a>, click <strong>Submit</strong>, enter your GitHub repo URL (<code class="font-mono">https://github.com/nextphp/cpanel-installer</code>), and set up the GitHub Webhook for automated releases.</p>
+                        <p>4. <strong>Submit to Packagist & Configure Auto-Update Hook</strong>:</p>
+                        <p>Log in to <a href="https://packagist.org" target="_blank" class="text-primary underline">packagist.org</a>, submit <code class="font-mono">https://github.com/nexus-lab/cpanel-installer</code>. To fix the <em>"This package is not auto-updated"</em> warning, follow the Webhook setup below.</p>
                     </div>
                 </Card>
 
                 <!-- Part 2: Publishing the Boilerplate Package -->
-                <Card title="Part 2: Publish nexus/shield-boilerplate as create-project" icon="sparkles" description="Full framework template installable in a single command">
+                <Card title="Part 2: Publish nexus-lab/shield-boilerplate as create-project" icon="sparkles" description="Full framework template installable in a single command">
                     <div class="space-y-4 text-xs sm:text-sm text-muted-foreground">
-                        <p>1. <strong>Create GitHub Repository</strong>: Create <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nexus/shield-boilerplate</code> containing the complete boilerplate codebase.</p>
+                        <p>1. <strong>Create GitHub Repository</strong>: Create <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nexus-lab/shield-boilerplate</code> containing the complete boilerplate codebase.</p>
 
                         <p>2. <strong>Root composer.json for the Boilerplate</strong>:</p>
                         <pre class="p-3 rounded-lg border border-border bg-muted/40 font-mono text-xs overflow-x-auto text-foreground"><code>{
-    "name": "nexus/shield-boilerplate",
+    "name": "nexus-lab/shield-boilerplate",
     "description": "Nexus Framework - High-Security Next.js-inspired PHP Boilerplate",
     "type": "project",
     "license": "MIT",
@@ -201,32 +203,63 @@ git push origin v1.0.0</code></pre>
         "ext-pdo": "*",
         "ext-sodium": "*",
         "ext-json": "*",
-        "nextphp/cpanel-installer": "^1.0"
+        "nexus-lab/cpanel-installer": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "Core\\": "core/",
             "App\\": "app/",
-            "Components\\": "components/"
+            "Components\\": "components/",
+            "Nexus\\Installer\\": "packages/cpanel-installer/src/",
+            "NextPHP\\Installer\\": "packages/cpanel-installer/src/"
         },
         "files": [
             "core/Router/helpers.php"
         ]
     },
     "bin": [
-        "nextphp"
+        "nexus",
+        "bin/nexus",
+        "nextphp",
+        "bin/nextphp"
     ],
     "scripts": {
+        "serve": [
+            "php nexus serve"
+        ],
         "post-create-project-cmd": [
             "Core\\Console\\Installer::postCreateProject"
         ]
     }
 }</code></pre>
 
-                        <p>3. <strong>Submit to Packagist</strong>: Submit <code class="font-mono">https://github.com/nexus/shield-boilerplate</code> to Packagist. Once published, any developer worldwide can install the entire application with one command:</p>
+                        <p>3. <strong>Submit to Packagist</strong>: Submit <code class="font-mono">https://github.com/nexus-lab/shield-boilerplate</code> to Packagist. Once published, any developer worldwide can install the entire application with one command:</p>
                         <div class="p-3 rounded-lg bg-primary/10 border border-primary/20 font-mono text-xs text-primary font-bold">
-                            composer create-project nexus/shield-boilerplate my-application
+                            composer create-project nexus-lab/shield-boilerplate my-application
                         </div>
+                    </div>
+                </Card>
+
+                <!-- Part 3: GitHub Webhook Setup Guide -->
+                <Card title="Fixing Packagist Auto-Update: GitHub Webhook Setup" icon="check-circle" description="How to dismiss the 'This package is not auto-updated' warning on Packagist">
+                    <div class="space-y-3 text-xs sm:text-sm text-muted-foreground">
+                        <p class="text-amber-500 font-medium flex items-center gap-2">
+                            <Lucide icon="alert-triangle" class="w-4 h-4" />
+                            Warning: "This package is not auto-updated. Please set up the GitHub Hook for Packagist..."
+                        </p>
+                        <p>Follow these 3 quick steps on GitHub to enable automatic sync whenever you push code or tags:</p>
+                        <ol class="list-decimal list-inside space-y-2 pl-1">
+                            <li>Get your <strong>Packagist API Token</strong> from your profile at <a href="https://packagist.org/profile/" target="_blank" class="text-primary underline">packagist.org/profile/</a>.</li>
+                            <li>Go to your GitHub repo &rarr; <strong>Settings</strong> &rarr; <strong>Webhooks</strong> &rarr; <strong>Add webhook</strong>:
+                                <ul class="list-disc list-inside space-y-1 font-mono text-xs pl-4 pt-1">
+                                    <li><strong>Payload URL</strong>: <code>https://packagist.org/api/github?username=nexus-lab</code></li>
+                                    <li><strong>Content type</strong>: <code>application/json</code></li>
+                                    <li><strong>Secret</strong>: <em>[Paste your Packagist API Token]</em></li>
+                                    <li><strong>Which events?</strong>: Select <em>"Just the push event"</em></li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>Add webhook</strong> on GitHub, then return to your Packagist package page and click the green <strong>"Update"</strong> button. The warning disappears immediately!</li>
+                        </ol>
                     </div>
                 </Card>
             </section>
@@ -497,7 +530,7 @@ echo $user->api_key; // Prints 'sk_live_secret_key_12345'</code></pre>
                     <div class="text-xs font-mono text-primary font-semibold uppercase tracking-wider">Section 08</div>
                     <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
                         <Lucide icon="terminal" class="text-primary w-6 h-6" />
-                        NextPHP CLI Toolchain Reference
+                        Nexus CLI Toolchain Reference
                     </h2>
                 </div>
 
@@ -511,35 +544,35 @@ echo $user->api_key; // Prints 'sk_live_secret_key_12345'</code></pre>
                         </thead>
                         <tbody class="divide-y divide-border/60 font-mono text-xs">
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp serve [port]</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus serve [port]</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Start local built-in development server (default port: 8000)</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp page:make &lt;route&gt;</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus page:make &lt;route&gt;</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Scaffold Next.js-style page and optional layout (--layout)</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp cache:compile</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus cache:compile</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Pre-compile all JSX templates into storage/cache/views/</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp cache:clear</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus cache:clear</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Clear compiled JSX views and unban/purge rate limit caches</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp security:audit</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus security:audit</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Perform automated 7-point security inspection &amp; fortress score</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp build:cpanel</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus build:cpanel</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Generate production-ready clean .zip archive for cPanel public_html</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp key:generate</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus key:generate</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">Regenerate authenticated 256-bit Libsodium APP_KEY</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 px-3 text-primary">php nextphp routes</td>
+                                <td class="py-2.5 px-3 text-primary">php nexus routes</td>
                                 <td class="py-2.5 px-3 font-sans text-muted-foreground">List all registered file-system routes and layouts</td>
                             </tr>
                         </tbody>
@@ -578,7 +611,7 @@ echo $user->api_key; // Prints 'sk_live_secret_key_12345'</code></pre>
 
                     <pre id="ai-agent-prompt-block" class="p-4 rounded-xl border border-border bg-muted/30 font-mono text-xs text-foreground overflow-x-auto leading-relaxed select-all"># NEXUS FRAMEWORK AI AGENT CODING RULES & ARCHITECTURE CONTRACT
 
-You are an expert engineer programming in the Nexus Framework (NextPHP Shield v2).
+You are an expert engineer programming in the Nexus Framework.
 Nexus is a Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework engineered for zero-daemon cPanel shared hosting (public_html root compatible, zero Node.js).
 
 ## STRICT CODING RULES FOR AI AGENTS:
@@ -608,7 +641,7 @@ Nexus is a Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework engi
    - Context-Aware Escaping: Always use Core\Security\Escaper::html(), ::attr(), ::js(), ::url().
    - Never touch shared /tmp: Sessions are stored in storage/sessions/ with 0700 permissions.
    - Sensitive columns on Models must be listed in protected array $encrypted = ['column_name'] for automatic Libsodium XChaCha20-Poly1305 authenticated encryption.
-   - Run 'php nextphp cache:compile' after altering JSX pages to regenerate compiled templates.</pre>
+   - Run 'php nexus cache:compile' after altering JSX pages to regenerate compiled templates.</pre>
                 </div>
             </section>
         </main>

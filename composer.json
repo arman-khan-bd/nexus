@@ -1,11 +1,11 @@
 {
-    "name": "nexus/shield-boilerplate",
+    "name": "nexus-lab/shield-boilerplate",
     "description": "Nexus Shield v2 - Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework boilerplate designed for cPanel shared hosting.",
     "type": "project",
     "license": "MIT",
     "keywords": [
         "nexus",
-        "nextphp",
+        "nexus-lab",
         "shield",
         "boilerplate",
         "cpanel",
@@ -27,7 +27,7 @@
         "ext-pdo": "*",
         "ext-sodium": "*",
         "ext-json": "*",
-        "nextphp/cpanel-installer": "^1.0"
+        "nexus-lab/cpanel-installer": "^1.0"
     },
     "suggest": {
         "ext-pdo_mysql": "Required to connect to cPanel MySQL and MariaDB databases",
@@ -50,14 +50,20 @@
             "Core\\": "core/",
             "App\\": "app/",
             "Components\\": "components/",
+            "Nexus\\Installer\\": "packages/cpanel-installer/src/",
             "NextPHP\\Installer\\": "packages/cpanel-installer/src/"
         }
     },
     "bin": [
+        "nexus",
+        "bin/nexus",
         "nextphp",
         "bin/nextphp"
     ],
     "scripts": {
+        "serve": [
+            "php nexus serve"
+        ],
         "post-create-project-cmd": [
             "Core\\Console\\Installer::postCreateProject"
         ],

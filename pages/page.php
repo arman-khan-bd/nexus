@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * NextPHP Shield v2 - Secure Showcase Landing Page
+ * Nexus Shield v2 - Secure Showcase Landing Page
  * Demonstrates Next.js-inspired App Router, JSX-compiled Shadcn UI,
  * Zero-AJAX pushState SPA navigation, and reactive Server Actions.
  */

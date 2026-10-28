@@ -81,8 +81,8 @@ final class ServerAction
     public static function isAction(Request $request): bool
     {
         return $request->isServerAction() ||
-               $request->hasHeader('x-nextphp-action') ||
                $request->hasHeader('x-nexus-action') ||
+               $request->hasHeader('x-nextphp-action') ||
                isset($_POST['_action']) ||
                isset($_POST['action']) ||
                (isset($request->getJson()['_action'])) ||
@@ -94,8 +94,8 @@ final class ServerAction
      */
     public static function getActionName(Request $request): ?string
     {
-        // 1. Header: X-NextPHP-Action or X-Nexus-Action
-        $header = $request->getHeader('x-nextphp-action') ?? $request->getHeader('x-nexus-action');
+        // 1. Header: X-Nexus-Action or X-NextPHP-Action
+        $header = $request->getHeader('x-nexus-action') ?? $request->getHeader('x-nextphp-action');
         if (is_string($header) && trim($header) !== '') {
             return trim($header);
         }

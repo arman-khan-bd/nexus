@@ -49,7 +49,7 @@ assert(file_exists($composerJsonPath), "composer.json must exist in root");
 
 $composerData = json_decode((string)file_get_contents($composerJsonPath), true);
 assert(is_array($composerData), "composer.json must be valid JSON");
-assert(in_array($composerData['name'], ['nextphp/shield-boilerplate', 'nexus/shield-boilerplate'], true), "Package name must be nextphp/shield-boilerplate or nexus/shield-boilerplate");
+assert(in_array($composerData['name'], ['nextphp/shield-boilerplate', 'nexus/shield-boilerplate', 'nexus-lab/shield-boilerplate'], true), "Package name must be valid");
 assert($composerData['type'] === 'project', "Package type must be project");
 
 // Verify dependencies
@@ -58,7 +58,7 @@ assert(isset($req['php']) && str_contains($req['php'], '8.2'), "Requires php: ^8
 assert(isset($req['ext-pdo']), "Requires ext-pdo");
 assert(isset($req['ext-sodium']), "Requires ext-sodium");
 assert(isset($req['ext-json']), "Requires ext-json");
-assert(isset($req['nextphp/cpanel-installer']), "Requires nextphp/cpanel-installer");
+assert(isset($req['nexus-lab/cpanel-installer']) || isset($req['nextphp/cpanel-installer']) || isset($req['nexus/cpanel-installer']), "Requires cpanel-installer");
 
 // Verify PSR-4 autoloading
 $psr4 = $composerData['autoload']['psr-4'] ?? [];
@@ -108,7 +108,9 @@ $testsPassed++;
 echo "[3/4] Testing root nextphp CLI tool commands (page:make, security:audit, cache:compile, build:cpanel)...\n";
 
 $rootNextphp = $baseDir . '/nextphp';
+$rootNexus = $baseDir . '/nexus';
 assert(file_exists($rootNextphp), "Root nextphp executable must exist");
+assert(file_exists($rootNexus), "Root nexus executable must exist");
 
 $cli = new Cli($baseDir);
 

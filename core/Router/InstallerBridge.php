@@ -9,7 +9,7 @@ use NextPHP\Installer\Installer;
 /**
  * Class InstallerBridge
  *
- * Micro-framework routing bridge between NextPHP Shield v2 and nextphp/cpanel-installer.
+ * Micro-framework routing bridge between Nexus Shield v2 and nexus/cpanel-installer.
  *
  * Interception Pipeline:
  * 1. Checks for the presence of the installation lockfile (storage/app.installed or .installed)
@@ -101,7 +101,7 @@ final class InstallerBridge
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Unconfigured | NextPHP</title>
+    <title>Application Unconfigured | Nexus</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #030712; color: #f3f4f6; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; display: flex; align-items: center; justify-content: center; height: 100vh; padding: 1.5rem; }
@@ -113,10 +113,10 @@ final class InstallerBridge
 </head>
 <body>
     <div class="box">
-        <h1>NextPHP Application Unconfigured</h1>
+        <h1>Nexus Application Unconfigured</h1>
         <p>This application has not yet been initialized and the graphical cPanel installer package was not detected.</p>
         <p>To enable the zero-SSH web setup wizard, install the installer package:</p>
-        <code>composer require nextphp/cpanel-installer</code>
+        <code>composer require nexus-lab/cpanel-installer</code>
     </div>
 </body>
 </html>

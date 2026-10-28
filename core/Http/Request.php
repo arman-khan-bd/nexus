@@ -225,12 +225,12 @@ final class Request
     }
 
     /**
-     * Check if request is a NextPHP/Nexus SPA navigation request.
+     * Check if request is a Nexus SPA navigation request.
      */
     public function isSpa(): bool
     {
-        return $this->getHeader('x-nextphp-spa') === 'true' ||
-               $this->getHeader('x-nexus-spa') === 'true' ||
+        return $this->getHeader('x-nexus-spa') === 'true' ||
+               $this->getHeader('x-nextphp-spa') === 'true' ||
                $this->getQuery('_spa') === '1';
     }
 
@@ -239,8 +239,8 @@ final class Request
      */
     public function isServerAction(): bool
     {
-        return $this->hasHeader('x-nextphp-action') ||
-               $this->hasHeader('x-nexus-action') ||
+        return $this->hasHeader('x-nexus-action') ||
+               $this->hasHeader('x-nextphp-action') ||
                isset($this->post['_action']) ||
                isset($this->getJson()['_action']) ||
                isset($this->post['action']) ||
@@ -252,11 +252,11 @@ final class Request
      */
     public function getActionName(): ?string
     {
-        if ($this->hasHeader('x-nextphp-action')) {
-            return $this->getHeader('x-nextphp-action');
-        }
         if ($this->hasHeader('x-nexus-action')) {
             return $this->getHeader('x-nexus-action');
+        }
+        if ($this->hasHeader('x-nextphp-action')) {
+            return $this->getHeader('x-nextphp-action');
         }
         if (isset($this->post['_action']) && is_string($this->post['_action'])) {
             return $this->post['_action'];

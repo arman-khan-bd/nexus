@@ -33,7 +33,7 @@ final class Installer
         // 4. Link Installer Package Bridge readiness
         echo "Linked cPanel Installer Bridge (\Core\Router\InstallerBridge)\n";
 
-        echo "\033[1;32m[OK] NextPHP Shield boilerplate initialized successfully! Ready for cPanel deployment.\033[0m\n\n";
+        echo "\033[1;32m[OK] Nexus Shield boilerplate initialized successfully! Ready for cPanel deployment.\033[0m\n\n";
     }
 
     /**

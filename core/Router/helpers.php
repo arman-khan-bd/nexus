@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * NextPHP Shield v2 - Global Router & Server Action Helper Functions
+ * Nexus Shield v2 - Global Router & Server Action Helper Functions
  */
 
 if (!function_exists('server_action')) {
