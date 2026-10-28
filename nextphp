@@ -1,0 +1,57 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Nexus / NextPHP CLI Executable (Alias)
+ * Next.js-inspired, JSX-compiled, ultra-secure PHP framework for cPanel.
+ *
+ * Supported Commands:
+ * - php nexus serve [port]         Start local development server
+ * - php nexus page:make <route>    Scaffold Next.js-style page and optional layout
+ * - php nexus security:audit       Scan file permissions, .env, and security headers
+ * - php nexus cache:compile        Pre-compile all JSX templates into storage/cache/views
+ * - php nexus build:cpanel         Package production-ready .zip archive for cPanel public_html
+ * - php nexus key:generate         Regenerate 256-bit Libsodium APP_KEY
+ * - php nexus cache:clear          Clear compiled JSX and view caches
+ * - php nexus routes               List all file-system routes
+ * - php nexus about                Display framework and security posture
+ */
+
+$baseDir = __DIR__;
+
+// 1. PSR-4 Autoloader
+if (file_exists($baseDir . '/vendor/autoload.php')) {
+    require_once $baseDir . '/vendor/autoload.php';
+} else {
+    spl_autoload_register(function (string $class) use ($baseDir) {
+        $prefixMap = [
+            'Core\\'               => $baseDir . '/core/',
+            'App\\'                => $baseDir . '/app/',
+            'Components\\'         => $baseDir . '/components/',
+            'Nexus\\Installer\\'   => $baseDir . '/packages/cpanel-installer/src/',
+            'NextPHP\\Installer\\' => $baseDir . '/packages/cpanel-installer/src/',
+        ];
+        foreach ($prefixMap as $prefix => $base) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) === 0) {
+                $relative = substr($class, $len);
+                $file = $base . str_replace('\\', '/', $relative) . '.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                    return;
+                }
+            }
+        }
+    });
+}
+
+// 2. Load Environment if .env exists
+if (file_exists($baseDir . '/.env')) {
+    \Core\Env::load($baseDir . '/.env');
+}
+
+// 3. Delegate execution to Core\Console\Cli
+$exitCode = \Core\Console\Cli::run($argv, $baseDir);
+exit($exitCode);

@@ -1,0 +1,85 @@
+{
+    "name": "nexus-lab/shield-boilerplate",
+    "description": "Nexus Shield v2 - Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework boilerplate designed for cPanel shared hosting.",
+    "type": "project",
+    "license": "MIT",
+    "keywords": [
+        "nexus",
+        "nexus-lab",
+        "shield",
+        "boilerplate",
+        "cpanel",
+        "shared-hosting",
+        "jsx",
+        "alpine-morph",
+        "zero-ssh",
+        "waf",
+        "fortress"
+    ],
+    "authors": [
+        {
+            "name": "Nexus Core Architecture Team",
+            "role": "Principal Architecture & Application Security"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "ext-sodium": "*",
+        "ext-json": "*",
+        "nexus-lab/cpanel-installer": "^1.0"
+    },
+    "suggest": {
+        "ext-pdo_mysql": "Required to connect to cPanel MySQL and MariaDB databases",
+        "ext-openssl": "Fallback cryptographic engine when native sodium is restricted",
+        "ext-mbstring": "Recommended for full Unicode and multibyte input sanitization",
+        "ext-fileinfo": "Required for upload MIME inspection",
+        "ext-gd": "Required for image sanitization and EXIF execution stripping"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/cpanel-installer",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "App\\": "app/",
+            "Components\\": "components/",
+            "Nexus\\Installer\\": "packages/cpanel-installer/src/",
+            "NextPHP\\Installer\\": "packages/cpanel-installer/src/"
+        }
+    },
+    "bin": [
+        "nexus",
+        "bin/nexus",
+        "nextphp",
+        "bin/nextphp"
+    ],
+    "scripts": {
+        "serve": [
+            "php nexus serve"
+        ],
+        "post-create-project-cmd": [
+            "Core\\Console\\Installer::postCreateProject"
+        ],
+        "post-install-cmd": [
+            "Core\\Console\\Installer::postInstall"
+        ],
+        "key:generate": [
+            "Core\\Console\\Installer::generateKeyCommand"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {}
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

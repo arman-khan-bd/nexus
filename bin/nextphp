@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Nexus CLI Toolchain (NextPHP)
+ * Next.js-inspired, JSX-compiled, ultra-secure PHP framework.
+ */
+
+$baseDir = dirname(__DIR__);
+
+// 1. PSR-4 Autoloader
+if (file_exists($baseDir . '/vendor/autoload.php')) {
+    require_once $baseDir . '/vendor/autoload.php';
+} else {
+    spl_autoload_register(function (string $class) use ($baseDir) {
+        $prefixMap = [
+            'Core\\'               => $baseDir . '/core/',
+            'App\\'                => $baseDir . '/app/',
+            'Components\\'         => $baseDir . '/components/',
+            'Nexus\\Installer\\'   => $baseDir . '/packages/cpanel-installer/src/',
+            'NextPHP\\Installer\\' => $baseDir . '/packages/cpanel-installer/src/',
+        ];
+        foreach ($prefixMap as $prefix => $base) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) === 0) {
+                $relative = substr($class, $len);
+                $file = $base . str_replace('\\', '/', $relative) . '.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                    return;
+                }
+            }
+        }
+    });
+}
+
+// 2. Load Environment
+\Core\Env::load($baseDir . '/.env');
+
+// 3. Delegate execution to Core\Console\Cli
+$exitCode = \Core\Console\Cli::run($argv, $baseDir);
+exit($exitCode);

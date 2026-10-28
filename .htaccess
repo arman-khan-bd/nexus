@@ -1,0 +1,131 @@
+# ==============================================================================
+# NEXUS FRAMEWORK - CPANEL FORTRESS .HTACCESS
+# Architected for shared hosting environments (public_html root compatible)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. HARDEN SERVER CONFIGURATION & PREVENT INFORMATION LEAKS
+# ------------------------------------------------------------------------------
+Options -Indexes -MultiViews +FollowSymLinks
+ServerSignature Off
+AddDefaultCharset UTF-8
+
+# Prevent directory listings
+IndexIgnore *
+
+# ------------------------------------------------------------------------------
+# 2. HTTP DEFENSIVE SECURITY HEADERS
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Prevent MIME-sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Clickjacking protection
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Cross-site scripting filter enforcement
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Referrer privacy policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Restrict dangerous browser features
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+    # Remove server fingerprint headers
+    Header unset X-Powered-By
+    Header unset Server
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 3. FORTRESS ACCESS CONTROL - PROTECT INTERNAL ARCHITECTURE
+# Block direct access to framework directories, system configurations & vendors
+# ------------------------------------------------------------------------------
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    <FilesMatch "(^\..*|composer\.(json|lock)|package\.(json|lock)|phpunit\.xml|\.(env|sql|log|ini|sh|bak|swp|md|git.*))$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    # Apache 2.2 fallback
+    <FilesMatch "(^\..*|composer\.(json|lock)|package\.(json|lock)|phpunit\.xml|\.(env|sql|log|ini|sh|bak|swp|md|git.*))$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 4. REWRITE ENGINE & DEEP WAF FILTERING
+# ------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Ensure Authorization header is passed to PHP in FastCGI / cPanel environments
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # --------------------------------------------------------------------------
+    # 4A. BLOCK DIRECT ACCESS TO PROTECTED SYSTEM DIRECTORIES
+    # --------------------------------------------------------------------------
+    RewriteRule ^/?(core|app|pages|components|database|storage|vendor|bin)(/.*)?$ - [F,L,NC]
+
+    # Block all hidden files/directories (starting with a dot)
+    RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+    # Block sensitive package files
+    RewriteRule ^composer\.(json|lock)$ - [F,L,NC]
+    RewriteRule ^package\.(json|lock)$ - [F,L,NC]
+
+    # --------------------------------------------------------------------------
+    # 4B. LAYER 7 QUERY STRING ATTACK MITIGATION (APACHE WAF)
+    # --------------------------------------------------------------------------
+
+    # Block Null-Byte Injection (%00 / \0)
+    RewriteCond %{QUERY_STRING} (?:%00|\0) [NC,OR]
+
+    # Block Base64 Execution Attempts
+    RewriteCond %{QUERY_STRING} (?:base64_(?:decode|encode)) [NC,OR]
+
+    # Block Cross-Site Scripting (<script>, javascript:, onload=, onerror=)
+    RewriteCond %{QUERY_STRING} (?:<|%3C).*?script.*?(?:>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:javascript:|vbscript:|data:text/html) [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:on(?:load|error|click|mouse|key)\s*=) [NC,OR]
+
+    # Block PHP Superglobal Injection / Globals Overwrite
+    RewriteCond %{QUERY_STRING} (?:GLOBALS|_REQUEST|_SERVER|_ENV|_FILES|HTTP_RAW_POST_DATA) [NC,OR]
+
+    # Block SQL Injection Signatures
+    RewriteCond %{QUERY_STRING} (?:union(?:%20|\+)+select) [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:concat(?:%20|\+)*\() [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:benchmark\s*\(|sleep\s*\() [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:information_schema) [NC,OR]
+    RewriteCond %{QUERY_STRING} (?:(?:%27|\')(?:\s*or\s*|\s*and\s*)(?:%27|\'|1=1|[0-9]=[0-9])) [NC,OR]
+
+    # Block Directory Traversal (../ or ..\ or URL-encoded equivalents)
+    RewriteCond %{QUERY_STRING} (?:(?:\.\.|%2e%2e)(?:/|%2f|\\|%5c)) [NC,OR]
+    RewriteCond %{THE_REQUEST} (?:(?:\.\.|%2e%2e)(?:/|%2f|\\|%5c)) [NC]
+
+    # Immediate rejection for exploit attempts: 403 Forbidden
+    RewriteRule .* - [F,L]
+
+    # --------------------------------------------------------------------------
+    # 4C. PUBLIC ASSETS & FRONT CONTROLLER ROUTING
+    # --------------------------------------------------------------------------
+
+    # Allow direct access to valid static files (css, js, images, fonts, icons)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Route all clean application URLs to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 5. CUSTOM HARDENED ERROR RESPONSES
+# ------------------------------------------------------------------------------
+ErrorDocument 403 "<html><head><title>403 Forbidden</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#090d16;color:#f1f5f9;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}.box{border:1px solid #1e293b;padding:2.5rem;border-radius:12px;text-align:center;background:#0f172a;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);}h1{color:#ef4444;margin:0 0 0.5rem;font-size:2rem;}p{color:#94a3b8;margin:0;}</style></head><body><div class='box'><h1>403 Forbidden</h1><p>Access denied by Nexus Security Shield.</p></div></body></html>"
