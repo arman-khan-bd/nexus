@@ -208,13 +208,8 @@ git push origin v1.0.0</code></pre>
         "psr-4": {
             "Core\\": "core/",
             "App\\": "app/",
-            "Components\\": "components/",
-            "Nexus\\Installer\\": "packages/cpanel-installer/src/",
-            "NextPHP\\Installer\\": "packages/cpanel-installer/src/"
-        },
-        "files": [
-            "core/Router/helpers.php"
-        ]
+            "Components\\": "components/"
+        }
     },
     "bin": [
         "nexus",
@@ -227,7 +222,11 @@ git push origin v1.0.0</code></pre>
             "php nexus serve"
         ],
         "post-create-project-cmd": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "Core\\Console\\Installer::postCreateProject"
+        ],
+        "key:generate": [
+            "Core\\Console\\Installer::generateKeyCommand"
         ]
     }
 }</code></pre>

@@ -19,7 +19,13 @@ final class Installer
     public static function postCreateProject(): void
     {
         $baseDir = dirname(__DIR__, 2);
-        echo "\n\033[1;36m===> Initializing Nexus Shield v2 Foundation...\033[0m\n";
+        echo "\n\033[1;32m";
+        echo "   _  __                   \n";
+        echo "  / |/ /__ __ _____ __ ___ \n";
+        echo " /    / -_) \ \ / // (_-< \n";
+        echo "/_/|_/\__/ /_\_\_,_/___/ \n";
+        echo "\033[0m";
+        echo "\033[1;36m===> Initializing Nexus Shield v2 Application...\033[0m\n\n";
 
         // 1. Storage directory creation with 0700 permissions
         self::setupStorageDirectories($baseDir);
@@ -27,13 +33,38 @@ final class Installer
         // 2. Generate .env from .env.example
         $envCreated = self::setupEnvironmentFile($baseDir);
 
-        // 3. Generate 256-bit Libsodium APP_KEY
-        self::generateAndWriteAppKey($baseDir, $envCreated);
+        // 3. Generate 256-bit Libsodium / AES APP_KEY
+        self::generateAndWriteAppKey($baseDir, true);
 
-        // 4. Link Installer Package Bridge readiness
-        echo "Linked cPanel Installer Bridge (\Core\Router\InstallerBridge)\n";
+        // 4. Pre-compile JSX view cache if views exist
+        if (class_exists(\Core\Compiler\JsxCompiler::class)) {
+            try {
+                $cacheDir = $baseDir . '/storage/cache/views';
+                $compiler = new \Core\Compiler\JsxCompiler($cacheDir);
+                $pagesDir = $baseDir . '/pages';
+                if (is_dir($pagesDir)) {
+                    $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($pagesDir));
+                    $compiled = 0;
+                    foreach ($iterator as $file) {
+                        if ($file->isFile() && $file->getExtension() === 'php') {
+                            $compiler->compile($file->getPathname());
+                            $compiled++;
+                        }
+                    }
+                    if ($compiled > 0) {
+                        echo "Pre-compiled {$compiled} JSX templates into storage/cache/views.\n";
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore precompile errors during bootstrap
+            }
+        }
 
-        echo "\033[1;32m[OK] Nexus Shield boilerplate initialized successfully! Ready for cPanel deployment.\033[0m\n\n";
+        echo "\n\033[1;32m[SUCCESS] Nexus application initialized successfully!\033[0m\n\n";
+        echo "Next steps:\n";
+        echo "  1. \033[1;33mphp nexus serve\033[0m         (Start local development server at http://127.0.0.1:8000)\n";
+        echo "  2. \033[1;33mphp nexus routes\033[0m        (Inspect discovered file-system routes)\n";
+        echo "  3. \033[1;33mphp nexus security:audit\033[0m  (Run 7-point automated fortress audit)\n\n";
     }
 
     /**
