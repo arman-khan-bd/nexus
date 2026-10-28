@@ -49,7 +49,7 @@ assert(file_exists($composerJsonPath), "composer.json must exist in root");
 
 $composerData = json_decode((string)file_get_contents($composerJsonPath), true);
 assert(is_array($composerData), "composer.json must be valid JSON");
-assert(in_array($composerData['name'], ['nextphp/shield-boilerplate', 'nexus/shield-boilerplate', 'nexus-lab/shield-boilerplate'], true), "Package name must be valid");
+assert(in_array($composerData['name'], ['nextphp/nexus', 'nexus/nexus', 'nexus-lab/nexus'], true), "Package name must be valid");
 assert($composerData['type'] === 'project', "Package type must be project");
 
 // Verify dependencies
@@ -74,7 +74,7 @@ assert(in_array('nextphp', $bin, true), "nextphp must be registered in binaries"
 $scripts = $composerData['scripts'] ?? [];
 assert(isset($scripts['post-create-project-cmd']), "Must declare post-create-project-cmd script");
 
-echo "  \033[1;32m-> PASS:\033[0m nextphp/shield-boilerplate composer.json manifest verified with all required constraints.\n";
+echo "  \033[1;32m-> PASS:\033[0m nextphp/nexus composer.json manifest verified with all required constraints.\n";
 $testsPassed++;
 
 // -----------------------------------------------------------------------------

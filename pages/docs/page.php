@@ -101,7 +101,7 @@ declare(strict_types=1);
                     <h3 class="text-base font-bold text-foreground">Option A: Single-Command Composer Installation</h3>
                     <p class="text-xs text-muted-foreground">Run this in your terminal to bootstrap a fresh project with isolated 0700 storage permissions, a secure 256-bit APP_KEY, and precompiled JSX caches:</p>
                     <div class="relative group">
-                        <pre class="p-4 rounded-xl border border-border bg-muted/40 font-mono text-xs sm:text-sm text-foreground overflow-x-auto"><code>composer create-project nexus-lab/shield-boilerplate my-app
+                        <pre class="p-4 rounded-xl border border-border bg-muted/40 font-mono text-xs sm:text-sm text-foreground overflow-x-auto"><code>composer create-project nexus-lab/nexus my-app
 cd my-app
 php nexus serve</code></pre>
                     </div>
@@ -188,13 +188,13 @@ git push origin v1.0.0</code></pre>
                 </Card>
 
                 <!-- Part 2: Publishing the Boilerplate Package -->
-                <Card title="Part 2: Publish nexus-lab/shield-boilerplate as create-project" icon="sparkles" description="Full framework template installable in a single command">
+                <Card title="Part 2: Publish nexus-lab/nexus as create-project" icon="sparkles" description="Full framework template installable in a single command">
                     <div class="space-y-4 text-xs sm:text-sm text-muted-foreground">
-                        <p>1. <strong>Create GitHub Repository</strong>: Create <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nexus-lab/shield-boilerplate</code> containing the complete boilerplate codebase.</p>
+                        <p>1. <strong>Create GitHub Repository</strong>: Create <code class="text-primary font-mono bg-muted px-1.5 py-0.5 rounded">nexus-lab/nexus</code> containing the complete boilerplate codebase.</p>
 
                         <p>2. <strong>Root composer.json for the Boilerplate</strong>:</p>
                         <pre class="p-3 rounded-lg border border-border bg-muted/40 font-mono text-xs overflow-x-auto text-foreground"><code>{
-    "name": "nexus-lab/shield-boilerplate",
+    "name": "nexus-lab/nexus",
     "description": "Nexus Framework - High-Security Next.js-inspired PHP Boilerplate",
     "type": "project",
     "license": "MIT",
@@ -233,9 +233,9 @@ git push origin v1.0.0</code></pre>
     }
 }</code></pre>
 
-                        <p>3. <strong>Submit to Packagist</strong>: Submit <code class="font-mono">https://github.com/nexus-lab/shield-boilerplate</code> to Packagist. Once published, any developer worldwide can install the entire application with one command:</p>
+                        <p>3. <strong>Submit to Packagist</strong>: Submit <code class="font-mono">https://github.com/nexus-lab/nexus</code> to Packagist. Once published, any developer worldwide can install the entire application with one command:</p>
                         <div class="p-3 rounded-lg bg-primary/10 border border-primary/20 font-mono text-xs text-primary font-bold">
-                            composer create-project nexus-lab/shield-boilerplate my-application
+                            composer create-project nexus-lab/nexus my-application
                         </div>
                     </div>
                 </Card>
