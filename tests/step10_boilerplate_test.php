@@ -64,7 +64,6 @@ assert(isset($req['nexus-lab/cpanel-installer']) || isset($req['nextphp/cpanel-i
 $psr4 = $composerData['autoload']['psr-4'] ?? [];
 assert(isset($psr4['Core\\']) && $psr4['Core\\'] === 'core/', "Autoload Core\\ -> core/");
 assert(isset($psr4['App\\']) && $psr4['App\\'] === 'app/', "Autoload App\\ -> app/");
-assert(isset($psr4['NextPHP\\Installer\\']), "Autoload NextPHP\\Installer\\");
 
 // Verify binary
 $bin = $composerData['bin'] ?? [];

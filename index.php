@@ -33,12 +33,16 @@ if (file_exists($baseDir . '/vendor/autoload.php')) {
     require_once $baseDir . '/vendor/autoload.php';
 } else {
     spl_autoload_register(function (string $class) use ($baseDir) {
+        $installerDir = is_dir($baseDir . '/vendor/nexus-lab/cpanel-installer/src')
+            ? $baseDir . '/vendor/nexus-lab/cpanel-installer/src/'
+            : $baseDir . '/packages/cpanel-installer/src/';
+
         $prefixes = [
             'Core\\'               => $baseDir . '/core/',
             'App\\'                => $baseDir . '/app/',
             'Components\\'         => $baseDir . '/components/',
-            'Nexus\\Installer\\'   => $baseDir . '/packages/cpanel-installer/src/',
-            'NextPHP\\Installer\\' => $baseDir . '/packages/cpanel-installer/src/',
+            'Nexus\\Installer\\'   => $installerDir,
+            'NextPHP\\Installer\\' => $installerDir,
         ];
 
         foreach ($prefixes as $prefix => $directory) {
