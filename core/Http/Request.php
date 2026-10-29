@@ -117,6 +117,11 @@ final class Request
         return $this->rawUri;
     }
 
+    public function getUri(): string
+    {
+        return $this->rawUri;
+    }
+
     public function getQuery(?string $key = null, mixed $default = null): mixed
     {
         if ($key === null) {

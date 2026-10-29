@@ -1,5 +1,5 @@
 {
-    "name": "nexus-lab/shield-boilerplate",
+    "name": "nexus-lab/nexus",
     "description": "Nexus Shield v2 - Next.js-inspired, JSX-compiled, ultra-secure PHP micro-framework boilerplate designed for cPanel shared hosting.",
     "type": "project",
     "license": "MIT",
@@ -25,26 +25,17 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "ext-sodium": "*",
         "ext-json": "*",
         "nexus-lab/cpanel-installer": "^1.0"
     },
     "suggest": {
+        "ext-sodium": "Recommended for native Libsodium cryptographic operations (XChaCha20-Poly1305)",
         "ext-pdo_mysql": "Required to connect to cPanel MySQL and MariaDB databases",
         "ext-openssl": "Fallback cryptographic engine when native sodium is restricted",
         "ext-mbstring": "Recommended for full Unicode and multibyte input sanitization",
         "ext-fileinfo": "Required for upload MIME inspection",
         "ext-gd": "Required for image sanitization and EXIF execution stripping"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "packages/cpanel-installer",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Core\\": "core/",
@@ -65,6 +56,7 @@
             "php nexus serve"
         ],
         "post-create-project-cmd": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "Core\\Console\\Installer::postCreateProject"
         ],
         "post-install-cmd": [

@@ -246,7 +246,7 @@ class AppRouter
     }
 
     /**
-     * Render Next.js-inspired 404 page.
+     * Render Next.js-inspired 404 page with right-side Copy Error button.
      */
     protected function renderNotFound(Request $request): Response
     {
@@ -256,6 +256,22 @@ class AppRouter
             $layouts = file_exists($rootLayout) ? [$rootLayout] : [];
             return $this->renderView($custom404, $layouts, $request, []);
         }
+
+        $uri = htmlspecialchars($request->getPath() ?: $request->getRawUri(), ENT_QUOTES, 'UTF-8');
+        $method = htmlspecialchars($request->getMethod(), ENT_QUOTES, 'UTF-8');
+        $ip = htmlspecialchars($request->getIp(), ENT_QUOTES, 'UTF-8');
+        $timestamp = date('Y-m-d H:i:s T');
+        $incidentId = 'nex_' . substr(bin2hex(random_bytes(6)), 0, 10);
+
+        $rawUri = $request->getPath() ?: $request->getRawUri();
+        $rawErrorText = "### Nexus 404 Route Not Found\n";
+        $rawErrorText .= "- **Status**: 404 Not Found\n";
+        $rawErrorText .= "- **Incident ID**: `{$incidentId}`\n";
+        $rawErrorText .= "- **Requested URI**: `{$rawUri}`\n";
+        $rawErrorText .= "- **HTTP Method**: {$request->getMethod()}\n";
+        $rawErrorText .= "- **Client IP**: {$request->getIp()}\n";
+        $rawErrorText .= "- **Timestamp**: {$timestamp}\n";
+        $escapedErrorPayload = htmlspecialchars($rawErrorText, ENT_QUOTES, 'UTF-8');
 
         $html = <<<HTML
 <!DOCTYPE html>
@@ -268,36 +284,329 @@ class AppRouter
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #030712;
-            color: #f9fafb;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #f1f5f9;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 1.5rem;
+            line-height: 1.5;
         }
-        .container {
+        .card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            max-width: 540px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1e293b;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
-        .code {
-            font-size: 2rem;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand-badge {
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 0.75rem;
             font-weight: 700;
-            border-right: 1px solid #374151;
-            padding-right: 1.5rem;
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+        .brand-badge span { color: #38bdf8; }
+        .status-badge {
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .copy-btn {
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #3b82f6;
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .copy-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #60a5fa;
+            transform: translateY(-1px);
+        }
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: #10b981 !important;
+            color: #34d399 !important;
+        }
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hero {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .code-display {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
             color: #ef4444;
+            font-family: ui-monospace, SFMono-Regular, monospace;
         }
-        .msg {
-            font-size: 1rem;
-            color: #9ca3af;
+        .title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
         }
+        .message {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+        .route-box {
+            background: #030712;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .route-box:hover {
+            border-color: #38bdf8;
+            background: #0b1120;
+        }
+        .copy-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #10b981;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .copy-toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .method-tag {
+            color: #38bdf8;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+        .uri-text {
+            color: #e2e8f0;
+            word-break: break-all;
+        }
+        .hint-box {
+            font-size: 0.8rem;
+            color: #64748b;
+            background: rgba(30, 41, 59, 0.5);
+            border-left: 3px solid #3b82f6;
+            padding: 0.6rem 0.85rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .hint-box code {
+            color: #93c5fd;
+            font-family: ui-monospace, monospace;
+        }
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            flex: 1;
+            min-width: 140px;
+            background: #2563eb;
+            color: #ffffff;
+            text-align: center;
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: background 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-secondary:hover { background: #334155; color: #ffffff; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="code">404</div>
-        <div class="msg">This page could not be found.</div>
+    <div class="card">
+        <!-- Top Header with Right-Side Copy Error Button -->
+        <div class="card-header">
+            <div class="header-left">
+                <span class="brand-badge">nexus<span>.php</span></span>
+                <span class="status-badge">404 Not Found</span>
+            </div>
+            <!-- Right-Side Copy Error Button -->
+            <button id="copy-404-btn" class="copy-btn" onclick="copyErrorDetails()" title="Copy route error details to clipboard">
+                <svg id="copy-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <svg id="check-icon" class="icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span id="copy-btn-txt">Copy Error</span>
+            </button>
+        </div>
+
+        <div class="hero">
+            <div class="code-display">404</div>
+            <div class="title">Route Not Found</div>
+        </div>
+
+        <p class="message">The requested page or endpoint does not exist or has been relocated.</p>
+
+        <div class="route-box" onclick="copyErrorDetails()" title="Click to copy route error details">
+            <div>
+                <span class="method-tag">{$method}</span>
+                <span class="uri-text">{$uri}</span>
+            </div>
+            <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Click to copy</span>
+        </div>
+
+        <div class="hint-box">
+            Developer Hint: Define this route by creating <code>pages{$uri}/page.php</code> or configuring a custom route handler.
+        </div>
+
+        <div class="actions">
+            <a href="/" class="btn-primary">Return Home</a>
+            <a href="/docs" class="btn-secondary">Documentation</a>
+            <button class="btn-secondary" onclick="window.location.reload()">Reload</button>
+        </div>
     </div>
+
+    <textarea id="raw-404-payload" class="hidden">{$escapedErrorPayload}</textarea>
+    <div id="nexus-404-toast" class="copy-toast"></div>
+
+    <script>
+        function show404Toast(msg) {
+            let toast = document.getElementById('nexus-404-toast');
+            if (toast) {
+                toast.innerHTML = '<svg class="icon" style="color:#34d399; margin-right:6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>' + msg + '</span>';
+                toast.classList.add('visible');
+                clearTimeout(window.__toast404Timer);
+                window.__toast404Timer = setTimeout(() => {
+                    toast.classList.remove('visible');
+                }, 2500);
+            }
+        }
+
+        function copyErrorDetails() {
+            const raw = document.getElementById('raw-404-payload').value;
+            const btn = document.getElementById('copy-404-btn');
+            const txt = document.getElementById('copy-btn-txt');
+            const copyIcon = document.getElementById('copy-icon');
+            const checkIcon = document.getElementById('check-icon');
+
+            const onSuccess = () => {
+                btn.classList.add('copied');
+                if (txt) txt.innerText = 'Copied to Clipboard!';
+                if (copyIcon) copyIcon.classList.add('hidden');
+                if (checkIcon) checkIcon.classList.remove('hidden');
+                show404Toast('Route details copied to clipboard!');
+
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    if (txt) txt.innerText = 'Copy Error';
+                    if (copyIcon) copyIcon.classList.remove('hidden');
+                    if (checkIcon) checkIcon.classList.add('hidden');
+                }, 2500);
+            };
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(raw).then(onSuccess).catch(() => fallbackCopy(raw, onSuccess));
+            } else {
+                fallbackCopy(raw, onSuccess);
+            }
+        }
+
+        function fallbackCopy(text, callback) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                callback();
+            } catch (e) {
+                alert('Could not copy automatically. Please copy the route manually.');
+            }
+            document.body.removeChild(textarea);
+        }
+    </script>
 </body>
 </html>
 HTML;
